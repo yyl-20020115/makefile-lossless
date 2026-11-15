@@ -1,0 +1,88 @@
+Makefile          ::= Element*
+
+Element            ::= Rule
+                     | VariableDefinition
+                     | IncludeDirective
+                     | Conditional
+                     | ForLoop
+                     | VPathDirective
+                     | LoadDirective
+                     | ExpressionStatement
+                     | Directive
+                     | Recipe
+                     | BlankLine
+                     | Comment
+                     | ErrorNode
+
+Rule               ::= RuleHeader RecipeSection*
+RuleHeader         ::= TargetList RuleOperator PrerequisiteList?
+                       InlineRecipe?
+RuleOperator       ::= ":" | "::" | "|"
+TargetList         ::= MakeWord (Whitespace MakeWord)*
+PrerequisiteList   ::= MakeWord (Whitespace MakeWord)*
+InlineRecipe       ::= Whitespace ";" RecipeText
+
+RecipeSection      ::= Recipe
+                     | Conditional
+                     | ForLoop
+Recipe             ::= RecipePrefix RecipeText Newline
+RecipePrefix       ::= Tab | CustomRecipePrefix
+
+VariableDefinition ::= AssignmentModifier* VariableName Whitespace*
+                       AssignmentOperator Whitespace* VariableValue Newline
+                     | "define" Whitespace VariableName Newline
+                       DefineBody
+                       "endef" Newline
+
+AssignmentModifier ::= "override" | "export" | "unexport" | "private"
+AssignmentOperator ::= "=" | ":=" | "::=" | ":::=" | "+=" | "?=" | "!="
+VariableValue      ::= MakeText
+DefineBody         ::= MakeText
+
+IncludeDirective   ::= IncludeKeyword Whitespace MakeText Newline
+IncludeKeyword     ::= "include" | "-include" | "sinclude" | ".include"
+
+Conditional        ::= ConditionalStart Element*
+                       ConditionalBranch*
+                       ConditionalEnd
+
+ConditionalStart   ::= GNUConditionalStart
+                     | BSDConditionalStart
+                     | NMakeConditionalStart
+ConditionalBranch  ::= ElseDirective Element*
+ConditionalEnd    ::= "endif" | ".endif" | NMakeEndIf
+
+GNUConditionalStart ::= "ifdef" MakeText
+                      | "ifndef" MakeText
+                      | "ifeq" MakeText
+                      | "ifneq" MakeText
+BSDConditionalStart ::= ".if" MakeText
+                      | ".ifdef" MakeText
+                      | ".ifndef" MakeText
+                      | ".ifmake" MakeText
+                      | ".ifnmake" MakeText
+                      | ".elif" MakeText
+                      | ".elifdef" MakeText
+                      | ".elifndef" MakeText
+                      | ".elifmake" MakeText
+                      | ".elifnmake" MakeText
+NMakeConditionalStart ::= "!IF" MakeText
+                         | "!IFDEF" MakeText
+                         | "!IFNDEF" MakeText
+ElseDirective     ::= "else" | ".else" | "!ELSE"
+
+ForLoop            ::= ".for" Whitespace MakeText Newline
+                       Element*
+                       ".endfor" Newline
+
+VPathDirective     ::= "vpath" (Whitespace MakeText)? Newline
+LoadDirective      ::= "-?" "load" Whitespace MakeText Newline
+ExpressionStatement ::= MakeExpression Newline
+Directive          ::= BSDDirective | NMakeDirective
+
+BSDDirective       ::= "." MakeText Newline
+NMakeDirective     ::= "!" MakeText Newline
+
+BlankLine          ::= Whitespace? Newline
+Comment            ::= Whitespace? "#" MakeText Newline?
+ErrorNode          ::= MakeText

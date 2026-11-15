@@ -16,9 +16,13 @@ exclude = [".github/", "TODO", "benches/"]
 [lib]
 # Keeps the libtest harness from rejecting divan options in `cargo bench`.
 bench = false
+crate-type = ["cdylib", "rlib"]
+
 
 [dependencies]
 rowan = "^0.16"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
 
 [dev-dependencies]
 divan = "0.1.21"

@@ -1,3 +1,4 @@
+use rowan::ast::AstNode;
 use crate::lossless::SyntaxNode;
 use crate::Makefile;
 use rowan::NodeOrToken;

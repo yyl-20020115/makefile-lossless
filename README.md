@@ -33,7 +33,7 @@ let contents = r#"PYTHON = python3
 all: build
 
 build:
-	$(PYTHON) setup.py build
+    $(PYTHON) setup.py build
 "#;
 
 let makefile: Makefile = contents.parse().unwrap();

@@ -60,7 +60,7 @@ pub mod rule;
 pub mod variable;
 pub mod vpath;
 mod word_list;
-
+pub mod json;
 use crate::lex::NMAKE_ESCAPABLE;
 use crate::lossless::{detached_elements, SyntaxElement, SyntaxNode, SyntaxToken};
 use crate::syntax_rules::last_backslash_unescaped;

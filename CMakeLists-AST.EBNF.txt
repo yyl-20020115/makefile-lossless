@@ -1,0 +1,50 @@
+cmake_file          = { element } ;
+
+element             = command_invocation
+                    | line_comment
+                    | bracket_comment
+                    | whitespace ;
+
+command_invocation  = identifier, "(", [ argument_list ], ")" ;
+
+argument_list       = argument, { separator, argument }, [ separator ] ;
+
+argument             = unquoted_argument
+                    | quoted_argument
+                    | bracket_argument ;
+
+unquoted_argument   = { unquoted_char | escape | variable_reference
+                      | generator_expression } ;
+
+quoted_argument     = '"',
+                      { quoted_char | escape | variable_reference
+                      | generator_expression },
+                      '"' ;
+
+bracket_argument    = bracket_open,
+                      { bracket_char },
+                      bracket_close ;
+
+bracket_open        = "[", { "=" }, "[" ;
+bracket_close       = "]", { "=" }, "]" ;
+
+line_comment        = "#", { any_char_except_newline }, newline ;
+
+bracket_comment     = "#", bracket_open,
+                      { bracket_char },
+                      bracket_close ;
+
+variable_reference = "$ENV{", variable_name, "}"
+                    | "$CACHE{", variable_name, "}"
+                    | "$(", variable_name, ")"
+                    | "${", variable_name, "}" ;
+
+generator_expression = "$<", { generator_expression_char }, ">" ;
+
+escape              = "\", any_char ;
+separator           = whitespace, { whitespace } ;
+whitespace          = " " | tab | newline | line_continuation ;
+line_continuation   = "\", newline ;
+
+identifier          = identifier_start, { identifier_char } ;
+variable_name       = { any_char_except_closing_brace } ;

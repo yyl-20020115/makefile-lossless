@@ -109,11 +109,11 @@ mod syntax_rules;
 #[cfg(test)]
 mod test_util;
 mod text;
-
+mod ffi;
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]
 struct ReadmeDoctests;
-
+pub use ast::json::{to_pretty_json, to_value};
 pub use ast::bsd::DirectiveKind;
 pub use ast::conditional::{BranchKind, ConditionalBranch, ConditionalItem, ConditionalKind};
 pub use ast::default_goal::DefaultGoal;
