@@ -1,15 +1,16 @@
 # MakefileLossless C# port
 
-This directory contains the first C# implementation of `makefile-lossless`, on the `port-to-csharp` branch. The Rust implementation remains unchanged at the repository root.
+This directory contains an incremental C# port of `makefile-lossless`. It targets .NET 8 and keeps the original Rust crate at the repository root.
 
-## Current scope
+## Variant-aware parsing
 
-The .NET 8 library provides a lossless parser foundation: input is grouped into physical/logical lines, common makefile constructs receive broad categories, and concatenating `Makefile.Items` (or calling `ToString()`) reproduces the source exactly, including CRLF, comments, whitespace, continuations, and a missing final newline. It also provides generic parsing and explicit make-variant selection.
+`Makefile.ParseWithVariant(text, MakefileVariant.GnuMake)` restricts recognized syntax and reports obvious cross-dialect constructs. `BsdMake` recognizes `.if`/`.for`/`.include` directives, `NMake` recognizes `!IF`/`!INCLUDE`, space-indented commands, and caret continuations in macro definitions, and `PosixMake` reports common GNU/BSD/nmake extensions. `Makefile.Parse(text)` accepts the supported dialect forms and detects nmake directives when present.
 
-This is an incremental port, not feature parity with the Rust crate yet. The rich mutable CST, detailed diagnostics, variant-specific grammar, make-variable/reference parsing, edit APIs, and comprehensive Rust test-suite port remain to be implemented. Classification is intentionally best-effort and must not be used as a validating grammar.
+All parsing is recovery-oriented. `Items` preserve original text exactly, including CRLF, comments, continuations, whitespace and missing final newlines. `Errors` and `IsValid` expose basic diagnostics. The parser is still a first-stage line-oriented port, not feature parity with Rust's detailed CST, grammar, error recovery, variable-reference parser, or editing API.
 
-## Build
+## Build and test
 
 ```sh
 dotnet build src/MakefileLossless/MakefileLossless.csproj
+dotnet test tests/MakefileLossless.Tests/MakefileLossless.Tests.csproj
 ```
